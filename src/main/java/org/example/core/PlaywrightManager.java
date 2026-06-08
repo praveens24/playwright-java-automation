@@ -15,7 +15,8 @@ public class PlaywrightManager {
         this.browser = switch (TestConfig.getBrowser().toLowerCase()) {
             case "chrome" -> playwright.chromium().launch(options);
             case "firefox" -> playwright.firefox().launch(options);
-            default -> playwright.webkit().launch(options);
+            case "webkit" -> playwright.webkit().launch(options);
+            default -> playwright.chromium().launch(options);
         };
 
     }
