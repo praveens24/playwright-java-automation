@@ -1,5 +1,6 @@
 package org.example.page;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.example.config.TestConfig;
 
@@ -55,13 +56,26 @@ public class LoginPage extends BasePage {
         return isVisible(dataError);
     }
 
-    public String getErrorMessage() {
-        return getText(dataError);
+    public Locator getLabelLocator() {
+        return page.locator(loginLogo);
+    }
+
+    public Locator getErrorBannerLocator() {
+        return page.locator(dataError);
+    }
+
+    public Locator getUserNameErrorIconLocator() {
+        return page.locator(userNameErrorIcon);
+    }
+
+    public Locator getPasswordErrorIconLocator() {
+        return page.locator(passwordErrorIcon);
     }
 
     public void closeError() {
         click(errorCloseButton);
     }
+
 
     public boolean userNameErrorIconVisible() {
         return isVisible(userNameErrorIcon);
