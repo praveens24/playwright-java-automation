@@ -22,7 +22,15 @@ public class PlaywrightManager {
     }
 
     public BrowserContext browserContext() {
-        return browser.newContext();
+
+        BrowserContext context = browser.newContext(new Browser.NewContextOptions()
+                .setViewportSize(1280, 720));
+        context.tracing().start(new Tracing.StartOptions()
+                .setScreenshots(true)
+                .setSnapshots(true)
+                .setSources(true));
+
+        return context;
     }
 
     public Page createPage(BrowserContext context) {

@@ -33,10 +33,11 @@ jobs:
 
       - name: Save Test Reports and Screenshots
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-java-reports
           path: |
             target/surefire-reports/**
             target/screenshots/**
+            target/playwright-traces/**
           retention-days: 7
