@@ -38,7 +38,7 @@ jobs:
           java -cp "$(cat cp.txt)" com.microsoft.playwright.CLI install --with-deps --skip-if-installed
 
       - name: Run Playwright Tests
-        run: mvn test
+        run: mvn clean test
 
       - name: Save Test Reports and Screenshots
         if: always()
@@ -46,6 +46,6 @@ jobs:
         with:
           name: playwright-java-reports
           path: |
-            target/surefire-reports/
-            target/screenshots/
+            target/surefire-reports/**
+            target/screenshots/**
           retention-days: 7
