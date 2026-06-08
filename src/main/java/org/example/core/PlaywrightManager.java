@@ -1,0 +1,36 @@
+package org.example.core;
+
+import com.microsoft.playwright.*;
+import org.example.config.TestConfig;
+
+public class PlaywrightManager {
+    private final Playwright playwright;
+    private final Browser browser;
+
+
+    public PlaywrightManager() {
+        this.playwright = Playwright.create();
+        BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
+                .setHeadless(TestConfig.headLessStatus());
+        this.browser = switch (TestConfig.getBrowser().toLowerCase()) {
+            case "chrome" -> playwright.chromium().launch(options);
+            case "firefox" -> playwright.firefox().launch(options);
+            default -> playwright.webkit().launch(options);
+        };
+
+    }
+
+    public BrowserContext browserContext() {
+        return browser.newContext();
+    }
+
+    public Page createPage(BrowserContext context) {
+        return context.newPage();
+    }
+
+    public void close() {
+        browser.close();
+        playwright.close();
+    }
+
+}
