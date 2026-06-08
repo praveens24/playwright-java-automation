@@ -17,11 +17,11 @@ public class InventoryTest extends BaseTest{
         assertEquals("Products", inventoryPage.pageTitle());
         assertEquals("Open Menu", inventoryPage.getNameOfMenuButton());
         inventoryPage.clickMenuButton();
-        assertTrue(inventoryPage.isSideBarMenuVisible());
+        inventoryPage.assertSideBarMenuIsVisible();
         assertEquals("Close Menu",inventoryPage.getNameOfMenuCloseButton());
         inventoryPage.clickMenuCloseButton();
-        assertTrue(inventoryPage.isSideBarMenuClosed());
-        assertTrue(inventoryPage.isProductSortVisible());
-        assertTrue(inventoryPage.isKartVisible());
+        inventoryPage.assertSideBarMenuIsClosed();
+        inventoryPage.assertProductSortIsVisible();
+        inventoryPage.assertKartIsVisible();
     }
 }
