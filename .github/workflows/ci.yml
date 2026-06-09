@@ -1,4 +1,4 @@
-name: Playwright Java Tests (Maven)
+name: Playwright Java Tests (Docker Containerized)
 
 on:
   push:
@@ -13,24 +13,29 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v5
+      # 1. Leverage local caching mechanisms to build the image efficiently on GitHub
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 2. Build the Docker image exactly like you did on your MacBook
+      - name: Build Framework Docker Image
+        uses: docker/build-push-action@v5
         with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
+          context: .
+          load: true
+          tags: playwright-tests:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Build and install
-        run: mvn -B install -DskipTests --no-transfer-progress
+      # 3. Run the container on the CI VM and mount the target directory to preserve trace files
+      - name: Run Playwright Tests inside Docker Container
+        run: |
+          mkdir -p target
+          docker run --rm -v "${{ github.workspace }}/target:/app/target" playwright-tests:latest
 
-      - name: Install Playwright Browsers
-        run: mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps"
-
-      - name: Run Playwright Tests
-        run: mvn test
-
+      # 4. Safely harvest your test reports, screenshots, and trace zips from the mounted volume
       - name: Save Test Reports and Screenshots
         if: always()
         uses: actions/upload-artifact@v4
