@@ -78,22 +78,22 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
+                    <!-- FIX: Direct flat property mapping to comply with modern Surefire schema definitions -->
                     <properties>
-                        <configuration>
-                            <property>
-                                <name>junit.jupiter.execution.parallel.enabled</name>
-                                <value>true</value>
-                            </property>
-                            <property>
-                                <name>junit.jupiter.execution.parallel.mode.default</name>
-                                <value>same_thread</value>
-                            </property>
-                            <property>
-                                <name>junit.jupiter.execution.parallel.mode.classes.default</name>
-                                <value>concurrent</value>
-                            </property>
-                        </configuration>
+                        <property>
+                            <name>junit.jupiter.execution.parallel.enabled</name>
+                            <value>true</value>
+                        </property>
+                        <property>
+                            <name>junit.jupiter.execution.parallel.mode.default</name>
+                            <value>same_thread</value>
+                        </property>
+                        <property>
+                            <name>junit.jupiter.execution.parallel.mode.classes.default</name>
+                            <value>concurrent</value>
+                        </property>
                     </properties>
+                    <!-- Dynamically forks 1 test runner thread per available CPU core -->
                     <forkCount>1C</forkCount>
                     <reuseForks>true</reuseForks>
                 </configuration>
