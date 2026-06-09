@@ -40,14 +40,16 @@ jobs:
           mkdir -p target/allure-results
           docker run --rm -v "${{ github.workspace }}/target:/app/target" playwright-ubuntu-runner:latest
 
-      # 3. FIX: Compile the raw JSON results to an HTML website using an Ubuntu Allure container
+      # 3. FIX: Compile the raw JSON results to an HTML website using an Ubuntu Allure container with root privileges
       - name: Generate Allure Report HTML via Linux Container
         if: always()
         run: |
           docker run --rm \
+            --user root \
             -v "${{ github.workspace }}/target:/app/target" \
             frankescobar/allure-docker-service:latest \
             allure generate /app/target/allure-results -o /app/target/allure-report --clean
+
 
       # 4. FIX: Deploy the compiled static HTML report site directly to GitHub Pages
       - name: Deploy Allure HTML Dashboard to GitHub Pages
