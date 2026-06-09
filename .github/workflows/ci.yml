@@ -1,10 +1,16 @@
-name: Playwright Java Tests (Docker Containerized)
+name: Playwright Java Tests (All-Ubuntu Native Docker)
 
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+
+# Required workspace token elevation security configurations for hosting reports
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   test:
@@ -15,34 +21,52 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1. Leverage local caching mechanisms to build the image efficiently on GitHub
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 2. Build the Docker image exactly like you did on your MacBook
+      # 1. Build your framework's Playwright Java 25 Linux image
       - name: Build Framework Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           load: true
-          tags: playwright-tests:latest
+          tags: playwright-ubuntu-runner:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # 3. Run the container on the CI VM and mount the target directory to preserve trace files
+      # 2. Run your parallel test suites inside your container
       - name: Run Playwright Tests inside Docker Container
         run: |
-          mkdir -p target
-          docker run --rm -v "${{ github.workspace }}/target:/app/target" playwright-tests:latest
+          mkdir -p target/allure-results
+          docker run --rm -v "${{ github.workspace }}/target:/app/target" playwright-ubuntu-runner:latest
 
-      # 4. Safely harvest your test reports, screenshots, and trace zips from the mounted volume
-      - name: Save Test Reports and Screenshots
+      # 3. FIX: Compile the raw JSON results to an HTML website using an Ubuntu Allure container
+      - name: Generate Allure Report HTML via Linux Container
+        if: always()
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/target:/app/target" \
+            frankescobar/allure-docker-service:latest \
+            allure generate /app/target/allure-results -o /app/target/allure-report --clean
+
+      # 4. FIX: Deploy the compiled static HTML report site directly to GitHub Pages
+      - name: Deploy Allure HTML Dashboard to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: target/allure-report
+          publish_branch: gh-pages
+
+      # 5. Backup storage artifact collection rule
+      - name: Save Raw Test Artifacts Backup
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-java-reports
+          name: playwright-java-raw-reports
           path: |
             target/surefire-reports/**
             target/screenshots/**
             target/playwright-traces/**
+            target/allure-results/**
           retention-days: 7

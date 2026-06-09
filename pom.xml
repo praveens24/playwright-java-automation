@@ -9,14 +9,15 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <junit.version>5.10.2</junit.version>
         <slf4j.version>2.0.13</slf4j.version>
         <assertj.version>3.27.7</assertj.version>
-        <aspectj.version>1.9.22.1</aspectj.version>
+        <aspectj.version>1.9.25</aspectj.version>
         <commons-io.version>2.16.1</commons-io.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <allure-junit5.version>2.27.0</allure-junit5.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -68,17 +69,40 @@
             <version>${aspectj.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- FIX: Added required Allure JUnit 5 Adapter dependency -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <version>${allure-junit5.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Maven Surefire Plugin Configured for Stable Parallel Runs -->
+            <!-- FIX: Added Dependency Plugin to extract the absolute path of aspectjweaver inside Docker containers -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>get-aspectjweaver-path</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven Surefire Plugin Configured for Allure + Parallel Runs -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <!-- FIX: Direct flat property mapping to comply with modern Surefire schema definitions -->
                     <properties>
                         <property>
                             <name>junit.jupiter.execution.parallel.enabled</name>
@@ -93,9 +117,27 @@
                             <value>concurrent</value>
                         </property>
                     </properties>
-                    <!-- Dynamically forks 1 test runner thread per available CPU core -->
                     <forkCount>1C</forkCount>
                     <reuseForks>true</reuseForks>
+                    <!-- FIX: Swapped out settings.localRepository for a globally compatible Maven artifact reference property -->
+                    <argLine>
+                        -javaagent:"${org.aspectj:aspectjweaver:jar}"
+                    </argLine>
+                    <systemPropertyVariables>
+                        <!-- FIX: Enforced clean standard string folder mapping paths relative to the volume layer -->
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+            <!-- Allure Maven Plugin to handle generation structures -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.12.0</version>
+                <configuration>
+                    <reportVersion>2.24.0</reportVersion>
+                    <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
                 </configuration>
             </plugin>
         </plugins>
