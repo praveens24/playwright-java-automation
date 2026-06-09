@@ -1,18 +1,32 @@
+# =========================================================================
+# Maven Build & Playwright Test Outputs (CRITICAL FIXES)
+# =========================================================================
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+**/target/
+*.log
+*.zip
+*.png
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+# Explicitly ensure local test run artifacts never leak into Git history
+target/screenshots/
+target/playwright-traces/
+target/surefire-reports/
+
+# Maven Wrapper fallback rule
+!.mvn/wrapper/maven-wrapper.jar
+
+# =========================================================================
+# IntelliJ IDEA 
+# =========================================================================
+.idea/
 *.iws
 *.iml
 *.ipr
+out/
 
-### Eclipse ###
+# =========================================================================
+# Eclipse 
+# =========================================================================
 .apt_generated
 .classpath
 .factorypath
@@ -21,18 +35,19 @@ target/
 .springBeans
 .sts4-cache
 
-### NetBeans ###
+# =========================================================================
+# NetBeans
+# =========================================================================
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
+# =========================================================================
+# Visual Studio Code & System Files
+# =========================================================================
 .vscode/
-
-### Mac OS ###
 .DS_Store
+Thumbs.db
