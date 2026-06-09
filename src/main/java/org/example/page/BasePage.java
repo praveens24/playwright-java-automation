@@ -1,5 +1,6 @@
 package org.example.page;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.LoadState;
 
@@ -20,7 +21,9 @@ public abstract class BasePage {
     }
 
     protected String getText(String locator) {
-        return page.locator(locator).textContent();
+        Locator element = page.locator(locator);
+        element.waitFor();
+        return element.textContent();
     }
 
     protected boolean isVisible(String locator) {
@@ -35,7 +38,9 @@ public abstract class BasePage {
     }
 
     protected String getAttribute(String locator, String attribute) {
-        return page.locator(locator).getAttribute(attribute);
+        Locator element = page.locator(locator);
+        element.waitFor();
+        return element.getAttribute(attribute);
     }
 
     protected void waitForPageLoad() {
