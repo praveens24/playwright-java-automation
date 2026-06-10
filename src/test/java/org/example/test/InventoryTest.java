@@ -23,6 +23,7 @@ public class InventoryTest extends BaseTest{
 
 
     @Test
+    @DisplayName("Menu-01: Inventory page menu can open and close")
     void shouldHaveBuggerMenuInLeftSideOfThePage(){
         assertEquals("Products", inventoryPage.pageTitle());
         assertEquals("Open Menu", inventoryPage.getNameOfMenuButton());

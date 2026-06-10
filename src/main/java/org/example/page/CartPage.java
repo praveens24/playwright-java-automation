@@ -25,7 +25,7 @@ public class CartPage extends BasePage {
     }
 
     public void removeProductFromCart(String productName) {
-        // Dynamically locate the remove button matching this specific item card
+
         page.locator(cartItems)
                 .filter(new Locator.FilterOptions().setHasText(productName))
                 .locator("button")

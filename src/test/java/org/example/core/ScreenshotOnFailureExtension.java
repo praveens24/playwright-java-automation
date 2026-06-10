@@ -1,7 +1,7 @@
 package org.example.core;
 
 import com.microsoft.playwright.Page;
-import org.example.test.BaseTest; // Ensure this import points to your test package
+import org.example.test.BaseTest;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
@@ -18,7 +18,7 @@ public class ScreenshotOnFailureExtension implements AfterTestExecutionCallback 
         }
 
         Object instance = context.getRequiredTestInstance();
-        // FIXED: Changed TestBase to BaseTest
+
         if (!(instance instanceof BaseTest baseTest) || baseTest.getPage() == null) {
             return;
         }
@@ -29,7 +29,7 @@ public class ScreenshotOnFailureExtension implements AfterTestExecutionCallback 
         String safeName = context.getDisplayName().replaceAll("[^a-zA-Z0-9._-]", "_");
         Path screenshotPath = screenshotsDir.resolve(safeName + ".png");
 
-        // FIXED: Using getter or direct clean reference to capture the screenshot
+
         baseTest.getPage().screenshot(new Page.ScreenshotOptions().setPath(screenshotPath));
     }
 }

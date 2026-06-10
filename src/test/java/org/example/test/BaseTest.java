@@ -37,7 +37,6 @@ public class BaseTest {
         page.screenshot(new Page.ScreenshotOptions()
                 .setPath(Paths.get("target/screenshots/" + testName + ".png")));
 
-        // Stop tracing and drop the resulting zip bundle into the target output folder
         context.tracing().stop(new Tracing.StopOptions()
                 .setPath(Paths.get("target/playwright-traces/" + testName + "-trace.zip")));
 

@@ -21,7 +21,7 @@ public class CheckoutTest extends BaseTest {
     @Test
     @DisplayName("CHKT-01/06: End-to-End purchase flow validating calculations and complete confirmation screen")
     void shouldCompletePurchaseFlowSuccessfully() {
-        // 1. Add items and navigate to cart
+
         inventoryPage.addProductToCart("Sauce Labs Backpack");
         page.click("[data-test='shopping-cart-link']");
 

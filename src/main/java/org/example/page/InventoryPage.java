@@ -52,7 +52,7 @@ public class InventoryPage extends BasePage {
     }
 
     public void addProductToCart(String productName) {
-        // Dynamically locate the button within the specific product card
+
         page.locator("[data-test='inventory-item']")
                 .filter(new Locator.FilterOptions().setHasText(productName))
                 .locator("button")
@@ -66,7 +66,7 @@ public class InventoryPage extends BasePage {
                 .click();
     }
 
-    // Locator Expositions for Playwright Assertions
+
     public Locator getPageHeaderLocator() { return page.locator(pageHeader); }
     public Locator getSortDropdownLocator() { return page.locator(sortDropdown); }
     public Locator getCartBadgeLocator() { return page.locator(shoppingCartBadge); }
